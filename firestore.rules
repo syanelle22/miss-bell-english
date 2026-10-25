@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isTeacher() {
+      return request.auth != null
+        && request.auth.token.email == 'syawos0@gmail.com'
+        && request.auth.token.email_verified == true
+        && request.auth.token.firebase.sign_in_provider == 'google.com';
+    }
+    match /teacherData/{documentId} {
+      allow read, write: if isTeacher();
+    }
+    match /classPages/{documentId} {
+      allow read: if true;
+      allow create, update: if isTeacher()
+        && request.resource.data.keys().hasOnly([
+          'classId', 'semester', 'announcements', 'assignments', 'tests', 'updatedAt'
+        ])
+        && request.resource.data.classId is string
+        && request.resource.data.semester in [1, 2]
+        && request.resource.data.announcements is list
+        && request.resource.data.assignments is list
+        && request.resource.data.tests is list
+        && request.resource.data.updatedAt is timestamp;
+      allow delete: if isTeacher();
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
