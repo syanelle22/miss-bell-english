@@ -1,72 +1,94 @@
-# Miss Bell’s English Journal
+# Miss Bell’s English Journal — School years update
 
-Website kelas Bahasa Inggris dengan tema vintage dan motion saat scroll.
-Halaman publik menampilkan pengumuman, instruksi tugas, tenggat, dan jadwal tes.
-Hanya akun Google Miss Bell yang dapat mengakses data siswa dan nilai.
+English tracker untuk 13 kelas, kelas 1–6. Tema vintage dan motion scroll tetap dipertahankan.
 
-## Unggah ke GitHub Pages
+## Pasang pembaruan pada website yang sudah berjalan
 
-1. Ekstrak ZIP ini di komputer.
-2. Buka repository `syanelle22/miss-bell-english`.
-3. Pilih **Add file → Upload files**. Unggah semua file hasil ekstrak langsung ke halaman utama repository. File `index.html` harus sejajar dengan README.md, bukan berada di folder tambahan. Jangan unggah ZIP-nya.
-4. Pilih **Commit changes**.
-5. Buka **Settings → Pages**. Pada **Build and deployment**, pilih **Deploy from a branch**.
-6. Pilih branch **main** dan folder **/(root)**, lalu **Save**.
-7. Tunggu proses deployment selesai. GitHub menampilkan alamat website pada halaman Pages.
+1. Di website lama, pastikan **Saved to Firebase** muncul, lalu klik **Backup**. Simpan backup privat di komputer. Jangan unggah backup atau ekspor nilai ke repository publik.
+2. Tutup semua tab website lama pada perangkat yang digunakan mengedit.
+3. Ekstrak ZIP pembaruan.
+4. Buka `firestore.rules` dengan Notepad. Salin seluruh isinya.
+5. Di Firebase Console, pilih **Firestore Database → Rules**, ganti aturan dengan isi file tadi, kemudian klik **Publish**. Ini tetap membatasi data guru hanya ke akun Google Miss Bell. Perubahan menambahkan tahun ajaran pada halaman publik dan mencegah aplikasi versi lama menimpa metadata tahun ajaran.
+6. Buka repository `syanelle22/miss-bell-english` → **Add file → Upload files**. Unggah SEMUA file hasil ekstrak langsung ke halaman utama repository, lalu **Commit changes**. File dengan nama sama diperbarui. Jangan unggah folder pembungkus atau ZIP-nya. File baru juga diperlukan: bukan hanya app.js.
+7. Tunggu deployment GitHub Pages selesai. Buka website lalu tekan **Ctrl + Shift + R**.
+8. Login sebagai Miss Bell. Periksa data siswa dan nilai lama sebelum mulai bekerja.
 
-Alamat yang diharapkan setelah deployment berhasil:
-https://syanelle22.github.io/miss-bell-english/
+Mengunggah firestore.rules ke GitHub tidak menerapkannya ke Firebase. Langkah Publish di Firebase tetap diperlukan. Aturan baru bisa membuat aplikasi lama gagal menyimpan sampai file website diperbarui. Tutup tab lama dan gunakan versi baru.
 
-## Firebase yang harus sudah disiapkan
+## Tahun ajaran dan data lama
 
-- Project: `miss-bell-s-english-classes`.
-- Authentication → Sign-in method → Google: aktif.
-- Authentication → Settings → Authorized domains: tambahkan `syanelle22.github.io` tanpa https atau path repository.
-- Firestore: database `(default)` sudah dibuat.
-- Firestore → Rules: isi sesuai `firestore.rules`, kemudian **Publish**. Mengunggah file rules ke GitHub saja tidak menerapkannya ke Firebase.
-- Konfigurasi aplikasi web sudah ada di firebase.js. Ini konfigurasi client publik, bukan service account. Jangan menambahkan private key/service account ke repository.
+Saat pertama digunakan, data dari versi lama dibaca sebagai tahun ajaran 2026/2027 berdasarkan tahun sekolah saat pembaruan dibuat. Aplikasi tidak menghapus dokumen data lama.
 
-## Pemakaian pertama
+- Gunakan **Manage archives → Update year label** bila label tahun sebelumnya perlu disesuaikan.
+- Perubahan pertama yang tersimpan memindahkan salinan data ke penyimpanan per tahun. Dokumen sumber lama tetap dipertahankan.
+- Pilih tahun melalui **School year**. Aplikasi menyelesaikan penyimpanan sebelum berpindah tahun.
+- **+ School year** membuat tahun baru dengan nilai, target, tugas, pengumuman, dan jadwal kosong. Pilihan menyalin nama siswa bersifat opsional dan memakai kelas yang sama. Ini tidak menaikkan kelas secara otomatis.
+- Tahun baru tidak langsung menjadi tahun publik. Pilih **Manage archives → Make this year public** saat sudah siap.
+- Orang tua hanya melihat tahun publik yang aktif, bukan arsip tahun sebelumnya.
+- Tahun publik aktif tidak dapat diarsipkan sebelum tahun lain dijadikan publik.
 
-1. Buka website setelah deployment berhasil. Halaman pengumuman bisa dibuka tanpa login.
-2. Klik **Teacher login**, pilih Google `syawos0@gmail.com`.
-3. Klik **Add student**, isi nama dan pilih kelas.
-4. Tunggu tulisan **Saved to Firebase** sebelum menutup halaman.
-5. Masukkan nilai pada **Daily scores** atau **Main tests**. Nilai 0 ikut rata-rata; nilai kosong tidak dihitung. Semua tes harian dalam satu LM memiliki bobot sama. Rata-rata kelas dihitung dari rata-rata LM masing-masing siswa.
-6. Buat tugas pada **Assignments**; ubah status pengumpulan di tabel guru. Status tidak memengaruhi nilai.
-7. Buat pengumuman dan jadwal pada **Schedule**. Setelah tersimpan, halaman orang tua ikut diperbarui.
-8. Klik **Parent page** lalu salin alamat untuk dibagikan. Tombol **Teacher dashboard** kembali ke tampilan guru selama sesi login aktif. Di dashboard, klik **Sign out** untuk keluar.
+## Arsip kelas dan tahun
 
-13 kelas: 1A, 1B, 2A, 2B, 2C, 3A, 3B, 4A, 4B, 5A, 5B, 6A, 6B.
-Setiap semester memiliki 4 LM × 2 kompetensi, ditambah Midterm dan End-of-semester.
+- Pilih tahun dan kelas dahulu, lalu **Manage archives**.
+- **Archive class** atau **Archive this year** menyimpan data dan menonaktifkan pengeditan. Data masih bisa dibaca, dicetak, dan diekspor.
+- **Restore class** atau **Restore this year** mengaktifkan pengeditan kembali.
+- Mengarsipkan kelas pada tahun aktif mengosongkan tugas, pengumuman, dan jadwal kelas tersebut di halaman publik setelah tersimpan. Data guru tetap ada.
+- Backup sekarang berisi data tahun yang sedang dipilih, seluruh kelas dan kedua semester. Untuk menyimpan backup beberapa tahun, unduh masing-masing tahun. Belum ada tombol impor backup.
 
-## Uji setelah website online
+## Target nilai
 
-Gunakan data percobaan dahulu, lalu:
+Isi **Target nilai** di toolbar. Target berlaku untuk kelas, semester, dan tahun yang sedang dipilih.
 
-- Tambahkan siswa percobaan dan nilai, tunggu Saved to Firebase, muat ulang. Data harus tetap muncul.
-- Buka lewat perangkat lain dan login sebagai Miss Bell; data harus sama.
-- Buka mode samaran tanpa login. Pengumuman/tugas/jadwal terlihat; siswa/nilai/status individu tidak terlihat.
-- Coba akun Google lain: dashboard guru harus ditolak.
-- Putuskan internet saat mengedit: jangan menganggap data tersimpan sampai muncul Saved to Firebase. Saat gagal, gunakan Retry save setelah koneksi pulih.
+- Tidak ada target bawaan. Kosongkan kolom untuk mematikan penanda.
+- Nilai harian, rata-rata LM, dan nilai tes utama yang lebih rendah dari target ditandai merah muda dengan teks merah.
+- Nilai yang sama dengan target tidak ditandai. Nilai kosong tidak ditandai. Nilai 0 tetap dihitung.
+- Target tidak mengubah nilai atau hasil rata-rata. Ini penanda bagi guru, dan tidak dipublikasikan ke orang tua.
 
-## Penyimpanan dan batas versi ini
+## Ekspor Excel dengan grafik
 
-Tidak ada data siswa contoh yang dimasukkan otomatis. Data dari prototipe lama tidak dipindahkan otomatis.
-Data privat disimpan pada teacherData per kelas. Halaman publik hanya mengambil classPages, dengan daftar field publik yang dipilih secara eksplisit. Nilai atau status siswa tidak ditaruh di HTML/GitHub/localStorage.
-Sesi login memakai penyimpanan sesi browser. Keluar dari akun setelah memakai komputer bersama.
+Klik **Export Excel**, pilih **Excel workbook (.xlsx) with chart**, kemudian **Save** untuk mengunduh.
 
-Penyimpanan berlangsung setelah jeda singkat saat mengedit. Gunakan satu perangkat/tab untuk mengedit pada satu waktu. Jika database berubah dari perangkat lain, aplikasi menghentikan penyimpanan agar tidak menimpa perubahan. Unduh Backup, lalu muat ulang. Backup JSON berisi data privat: simpan sendiri, jangan unggah ke repository publik. Versi ini belum memiliki tombol impor backup.
+Workbook berisi:
 
-Backup dan Export scores adalah unduhan manual; jangan letakkan file hasilnya di repository.
-Batas ukuran data privat ditetapkan 800 KB per kelas; aplikasi menolak penyimpanan yang melewati batas dan meminta backup.
-Belum ada pengarsipan tahun ajaran, unggah lampiran, atau notifikasi otomatis. Koneksi internet diperlukan untuk sinkronisasi. Kuota Firebase mengikuti paket project yang digunakan.
+1. **Summary:** rata-rata kelas untuk LM 1–4, Midterm dan Semester test, target, jumlah nilai yang sudah tercatat, jumlah siswa di bawah target, dan grafik batang yang dapat diedit dengan skala 0–100.
+2. **Recap:** rekap masing-masing siswa, penanda nilai rendah, filter, judul, serta header yang tetap terlihat saat menggulir. Di sebelah kanan terdapat perhitungan penanda 1/0 yang menjadi sumber jumlah siswa di bawah target.
+3. **Daily scores:** semua tes harian, termasuk tes tambahan, dengan label LM dan kompetensi.
 
-## Verifikasi saat paket dibuat
+Rata-rata dan ringkasan dalam Excel memakai rumus yang terhubung. Nilai mentah bisa diedit di Daily scores dan nilai tes utama di Recap. Target utama ada di Summary C4. Grafik terhubung ke sel ringkasan. Nilai kosong dikecualikan dan nol dihitung. Setiap tes harian di dalam LM memiliki bobot sama. Rata-rata LM kelas dihitung dari rata-rata LM masing-masing siswa. Tidak ada nilai akhir gabungan yang dihitung otomatis.
 
-- Pemeriksaan sintaks JavaScript lulus.
-- Pengujian model: rata-rata, nol/kosong, 13 kelas, pemisahan semester/kelas, pemindahan siswa, dan whitelist field publik lulus.
-- Pengujian transaksi dengan Firebase simulasi: penyimpanan atomik, pembaruan hanya kelas yang berubah, dan penolakan konflik revisi lulus.
-- Browser: halaman publik terhubung ke Firebase; pembacaan teacherData tanpa login ditolak oleh rules project ini.
-- Alur tambah siswa dan rata-rata diuji menggunakan autentikasi simulasi lokal, tanpa menulis data percobaan ke Firebase asli.
-- Login Google akun Miss Bell, penyimpanan terautentikasi asli, dan sinkronisasi lintas perangkat harus diuji setelah GitHub Pages aktif.
+CSV lama tetap tersedia pada pilihan format ekspor.
+
+## Tugas dan jadwal ke beberapa kelas
+
+Saat membuat tugas atau jadwal, centang kelas-kelas yang diinginkan. Kelas yang diarsipkan tidak dapat dipilih.
+
+Untuk item yang sudah dibuat, gunakan **Copy to classes**, pilih kelas tujuan, dan sesuaikan tanggal bila diperlukan. Setiap kelas mendapat salinan independen dengan ID baru. Mengedit satu salinan tidak mengubah kelas lain. Nilai dan status pengumpulan tidak ikut disalin. Menyalin lagi akan membuat item baru, bukan memperbarui salinan sebelumnya.
+
+## Lampiran pengumuman dan tugas
+
+Lampiran memakai tautan dokumen HTTPS, sesuai pilihan Google Drive. Tidak ada unggah file langsung ke Firebase Storage dan tidak perlu mengaktifkan Blaze untuk fitur tautan ini.
+
+1. Unggah dokumen PDF/Word ke Google Drive milikmu.
+2. Atur hak lihat dokumen bagi siswa/orang tua yang dituju. Misalnya, tautan dapat dilihat oleh penerimanya jika itu memang diinginkan.
+3. Salin sharing link.
+4. Pada pengumuman atau tugas, isi **Document name** dan **Google Drive document link**.
+5. Tunggu **Saved to Firebase**. Tautan dokumen muncul pada halaman publik.
+
+Gunakan Edit untuk mengganti lampiran. Kosongkan link untuk menghapus tautan dari item, tanpa menghapus file di Drive. Aplikasi tidak mengubah izin berbagi di Google Drive secara otomatis. Jangan lampirkan dokumen nilai atau catatan privat pada item publik.
+
+## Firebase dan akses
+
+- Google sign-in dan authorized domain `syanelle22.github.io` tetap harus aktif.
+- Data privat berada dalam teacherData dan hanya akun `syawos0@gmail.com` yang boleh mengaksesnya.
+- Halaman orang tua hanya membaca classPages: pengumuman, instruksi tugas, dokumen publik yang ditautkan, serta jadwal tes. Tidak ada nama siswa, nilai, target, atau status individu yang dipublikasikan otomatis.
+- Aplikasi menolak menimpa data jika perangkat/tab lain telah mengubah revisi database. Unduh Backup sebelum memuat ulang untuk menjaga draft.
+- Gunakan satu tab/perangkat untuk mengedit dalam satu waktu, dan tunggu Saved to Firebase sebelum menutup.
+- Ukuran data privat dibatasi 800 KB per kelas per tahun. Bila batas tercapai, ekspor atau backup sebelum melanjutkan.
+
+## Pemeriksaan paket
+
+Pemeriksaan sintaks dan pengujian model/transaksi simulasi meliputi migrasi data lama, pemisahan tahun, pembuatan semua kelas, aktivasi tahun publik, penyimpanan target, arsip kelas, konflik revisi, whitelist publik, URL aman, serta salinan antar kelas.
+
+Di browser dengan Firebase simulasi lokal: tugas beserta lampiran muncul di dua kelas, tahun baru dimulai kosong, dan pengarsipan menonaktifkan editing. Tidak ada data percobaan yang ditulis ke Firebase pengguna.
+
+Hasil XLSX diuji dengan import ulang dan kalkulasi rumus: nilai nol/kosong, tes tambahan, perluasan rentang 50 siswa, kelas kosong, target kosong, perubahan input, serta grafik native. Ketiga lembar dirender dan diperiksa. Pemeriksaan akhir pada Microsoft Excel desktop dan sinkronisasi Firebase dengan akun pengguna perlu dilakukan setelah pembaruan dipasang.

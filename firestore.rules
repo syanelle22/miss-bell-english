@@ -8,13 +8,15 @@ service cloud.firestore {
         && request.auth.token.firebase.sign_in_provider == 'google.com';
     }
     match /teacherData/{documentId} {
-      allow read, write: if isTeacher();
+      allow read: if isTeacher();
+      allow write: if isTeacher()
+        && (documentId != 'meta' || request.resource.data.schema == 2);
     }
     match /classPages/{documentId} {
       allow read: if true;
       allow create, update: if isTeacher()
         && request.resource.data.keys().hasOnly([
-          'classId', 'semester', 'announcements', 'assignments', 'tests', 'updatedAt'
+          'classId', 'semester', 'schoolYear', 'announcements', 'assignments', 'tests', 'updatedAt'
         ])
         && request.resource.data.classId is string
         && request.resource.data.semester in [1, 2]

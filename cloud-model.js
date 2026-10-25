@@ -1,3 +1,4 @@
+import {safeAttachment} from './school-model.js?v=2';
 // Only explicit public fields may leave the teacher collection.
 export const CLASS_IDS = ['1A','1B','2A','2B','2C','3A','3B','4A','4B','5A','5B','6A','6B'];
 export function splitPrivate(state) {
@@ -6,6 +7,7 @@ export function splitPrivate(state) {
     const ids = new Set(students.map(s => s.id));
     const own = obj => Object.fromEntries(Object.entries(obj).filter(([key]) => ids.has(key.split('|')[0])));
     const chunk = {
+      targetEntries:Object.fromEntries(Object.entries(state.targets||{}).filter(([key])=>key.startsWith(classId+'|'))),archived:!!state.archivedClasses?.includes(classId),
       students, tests: state.tests.filter(t => t.classId === classId),
       scores: own(state.scores), main: own(state.main), assignmentStatuses: own(state.assignmentStatuses),
       curriculum: Object.fromEntries(Object.entries(state.curriculum).filter(([key]) => key.startsWith(classId+'|'))),
@@ -21,20 +23,21 @@ export function splitPrivate(state) {
 export function mergePrivate(chunks, blank) {
   const result = blank(); result.portalVersion=1; result.assignmentVersion=1;
   result.tests=[];
-  for (const json of Object.values(chunks)) {
+  for (const [classId,json] of Object.entries(chunks)) {
     const chunk=JSON.parse(json);
+    result.targets??={};Object.assign(result.targets,chunk.targetEntries||{});result.archivedClasses??=[];if(chunk.archived)result.archivedClasses.push(classId);
     for (const field of ['students','tests','events','announcements','assignments']) result[field].push(...chunk[field]);
     for (const field of ['scores','main','curriculum','assignmentStatuses']) Object.assign(result[field],chunk[field]);
   }
   return result;
 }
-export function publicPage(state,classId,semester) {
-  const select = list => list.filter(a => a.classId===classId && a.semester===semester);
+export function publicPage(state,classId,semester,schoolYear) {
+  const select = list => (state.archivedClasses?.includes(classId)?[]:list).filter(a => a.classId===classId && a.semester===semester);
   const planned = select(state.events).map(t=>({id:t.id,title:t.title,date:t.date,type:t.type,lm:t.lm,topic:t.topic,notes:t.notes}));
   const daily = select(state.tests).filter(t=>t.date).map(t=>({id:t.id,title:t.name,date:t.date,type:'daily',lm:t.lm,topic:`LM ${t.lm} · Competency ${t.competency}`,notes:''}));
-  return { classId, semester,
-    announcements: select(state.announcements).map(a=>({id:a.id,text:a.text,date:a.date})),
-    assignments: select(state.assignments).map(a=>({id:a.id,title:a.title,due:a.due,lm:a.lm,instructions:a.instructions})),
+  return { classId, semester, ...(schoolYear?{schoolYear}:{}),
+    announcements: select(state.announcements).map(a=>({id:a.id,text:a.text,date:a.date,document:safeAttachment(a.document)})),
+    assignments: select(state.assignments).map(a=>({id:a.id,title:a.title,due:a.due,lm:a.lm,instructions:a.instructions,document:safeAttachment(a.document)})),
     tests: [...planned,...daily]
   };
 }
