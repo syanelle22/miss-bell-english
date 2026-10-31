@@ -1,4 +1,4 @@
-# Miss Bell’s English Club — Final v6
+# Miss Bell’s English Club — Final v6.1
 
 Desain kucing putih, cream, baby blue, dan merah. Home hanya berisi menu; kelas dan semester dipilih lewat dropdown. Versi ini memakai proyek Firebase lama Miss Bell. Tidak ada data contoh atau database baru yang diisikan otomatis.
 
@@ -48,3 +48,9 @@ Lampiran tetap berupa tautan HTTPS Google Drive atau dokumen web. Atur izin doku
 ## Status pengujian
 
 Logika nilai, migrasi legacy, pemisahan tahun/kelas, backup versi lama/baru, materi belajar, publikasi, dan pembatasan akses diuji secara lokal. Antarmuka editor diuji dengan data terpisah. Login Google dan data asli proyek perlu diperiksa setelah upload dan Rules dipasang; paket ini tidak mengubah database produksi saat dibuat.
+
+## Update v6.1 — tautan dokumen dan assessment tersemat
+
+Tautan dokumen tampil di kartu dan detail publik untuk pengumuman, assignments, dan assessments. Assessment yang sudah terbit untuk kelas/semester terpilih otomatis muncul di atas Announcements dengan label PINNED ASSESSMENT, diurutkan dari tanggal terdekat. Setelah tanggal assessment lewat, kartu otomatis tidak tampil di Announcements; jadwal aslinya tetap ada di Assessments/Calendar. Draft dan jadwal yang belum waktunya tayang tetap tidak muncul. Perubahan atau penghapusan assessment langsung mengikuti sumbernya tanpa membuat post duplikat.
+
+Untuk update dari v6: unggah semua file paket baru ke repository yang sama, Commit changes, lalu hard refresh Ctrl+Shift+R. Rules v6 tetap sama; tidak perlu mengubahnya lagi jika sudah dipasang. Tidak perlu input ulang link atau membuat ulang assessment yang sudah tersimpan. Bila link belum terlihat, login dan klik Sync noticeboard, kemudian periksa lagi melalui Incognito.
