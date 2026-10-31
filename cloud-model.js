@@ -1,4 +1,7 @@
-import {safeAttachment} from './school-model.js?v=2';
+import {publicItem} from './release-model.js?v=6';
+import {schoolDate,visibleAnnouncement,sortedAnnouncements} from './final-model.js?v=6';
+import {isPublished} from './workflow-model.js?v=6';
+import {safeAttachment} from './school-model.js?v=6';
 // Only explicit public fields may leave the teacher collection.
 export const CLASS_IDS = ['1A','1B','2A','2B','2C','3A','3B','4A','4B','5A','5B','6A','6B'];
 export function splitPrivate(state) {
@@ -7,7 +10,10 @@ export function splitPrivate(state) {
     const ids = new Set(students.map(s => s.id));
     const own = obj => Object.fromEntries(Object.entries(obj).filter(([key]) => ids.has(key.split('|')[0])));
     const chunk = {
+      learningPlans:(state.learningPlans||[]).filter(t=>t.classId===classId),vocabulary:(state.vocabulary||[]).filter(t=>t.classId===classId),
       targetEntries:Object.fromEntries(Object.entries(state.targets||{}).filter(([key])=>key.startsWith(classId+'|'))),archived:!!state.archivedClasses?.includes(classId),
+      trash:(state.trash||[]).filter(t=>t.classId===classId),remedials:(state.remedials||[]).filter(r=>ids.has(r.studentId)),
+      assessmentStatuses:own(state.assessmentStatuses||{}),teacherNotes:(state.teacherNotes||[]).filter(r=>ids.has(r.studentId)),audit:(state.audit||[]).filter(r=>r.classId===classId),
       students, tests: state.tests.filter(t => t.classId === classId),
       scores: own(state.scores), main: own(state.main), assignmentStatuses: own(state.assignmentStatuses),
       curriculum: Object.fromEntries(Object.entries(state.curriculum).filter(([key]) => key.startsWith(classId+'|'))),
@@ -22,22 +28,21 @@ export function splitPrivate(state) {
 }
 export function mergePrivate(chunks, blank) {
   const result = blank(); result.portalVersion=1; result.assignmentVersion=1;
-  result.tests=[];
+  result.tests=[];result.learningPlans=[];result.vocabulary=[];result.trash=[];result.remedials=[];result.assessmentStatuses={};result.teacherNotes=[];result.audit=[];
   for (const [classId,json] of Object.entries(chunks)) {
-    const chunk=JSON.parse(json);
+    const chunk=JSON.parse(json);result.learningPlans.push(...(chunk.learningPlans||[]));result.vocabulary.push(...(chunk.vocabulary||[]));Object.assign(result.assessmentStatuses,chunk.assessmentStatuses||{});result.teacherNotes.push(...(chunk.teacherNotes||[]));result.audit.push(...(chunk.audit||[]));result.trash.push(...(chunk.trash||[]));result.remedials.push(...(chunk.remedials||[]));
     result.targets??={};Object.assign(result.targets,chunk.targetEntries||{});result.archivedClasses??=[];if(chunk.archived)result.archivedClasses.push(classId);
     for (const field of ['students','tests','events','announcements','assignments']) result[field].push(...chunk[field]);
     for (const field of ['scores','main','curriculum','assignmentStatuses']) Object.assign(result[field],chunk[field]);
   }
   return result;
 }
-export function publicPage(state,classId,semester,schoolYear) {
-  const select = list => (state.archivedClasses?.includes(classId)?[]:list).filter(a => a.classId===classId && a.semester===semester);
-  const planned = select(state.events).map(t=>({id:t.id,title:t.title,date:t.date,type:t.type,lm:t.lm,topic:t.topic,notes:t.notes}));
-  const daily = select(state.tests).filter(t=>t.date).map(t=>({id:t.id,title:t.name,date:t.date,type:'daily',lm:t.lm,topic:`LM ${t.lm} · Competency ${t.competency}`,notes:''}));
-  return { classId, semester, ...(schoolYear?{schoolYear}:{}),
-    announcements: select(state.announcements).map(a=>({id:a.id,text:a.text,date:a.date,document:safeAttachment(a.document)})),
-    assignments: select(state.assignments).map(a=>({id:a.id,title:a.title,due:a.due,lm:a.lm,instructions:a.instructions,document:safeAttachment(a.document)})),
-    tests: [...planned,...daily]
-  };
+export function publicPage(state,classId,semester,schoolYear,defaultSemester=1,today=schoolDate()) {
+ const select=list=>(state.archivedClasses?.includes(classId)?[]:(list||[])).filter(x=>x.classId===classId&&x.semester===semester&&x.status!=='draft'&&x.status!=='scheduled');
+ return {classId,semester,defaultSemester,...(schoolYear?{schoolYear}:{}),
+ announcements:sortedAnnouncements(select(state.announcements).filter(x=>visibleAnnouncement(x,today))).map(x=>publicItem('announcements',x)),
+ assignments:select(state.assignments).map(x=>publicItem('assignments',x)),
+ tests:[...select(state.events),...select(state.tests).filter(x=>x.date)].map(x=>publicItem('tests',x)),
+ learningPlans:select(state.learningPlans).map(x=>publicItem('learningPlans',x)),
+ vocabulary:select(state.vocabulary).map(x=>publicItem('vocabulary',x))};
 }

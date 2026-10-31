@@ -1,33 +1,48 @@
 rules_version = '2';
 service cloud.firestore {
-  match /databases/{database}/documents {
-    function isTeacher() {
-      return request.auth != null
-        && request.auth.token.email == 'syawos0@gmail.com'
-        && request.auth.token.email_verified == true
-        && request.auth.token.firebase.sign_in_provider == 'google.com';
-    }
-    match /teacherData/{documentId} {
-      allow read: if isTeacher();
-      allow write: if isTeacher()
-        && (documentId != 'meta' || request.resource.data.schema == 2);
-    }
-    match /classPages/{documentId} {
-      allow read: if true;
-      allow create, update: if isTeacher()
-        && request.resource.data.keys().hasOnly([
-          'classId', 'semester', 'schoolYear', 'announcements', 'assignments', 'tests', 'updatedAt'
-        ])
-        && request.resource.data.classId is string
-        && request.resource.data.semester in [1, 2]
-        && request.resource.data.announcements is list
-        && request.resource.data.assignments is list
-        && request.resource.data.tests is list
-        && request.resource.data.updatedAt is timestamp;
-      allow delete: if isTeacher();
-    }
-    match /{document=**} {
-      allow read, write: if false;
-    }
+ match /databases/{database}/documents {
+  function isTeacher() {
+   return request.auth != null
+    && request.auth.token.email == 'syawos0@gmail.com'
+    && request.auth.token.email_verified == true
+    && request.auth.token.firebase.sign_in_provider == 'google.com';
   }
+  match /teacherData/{documentId} {
+   allow read: if isTeacher();
+   allow write: if isTeacher() && (documentId != 'meta' || (request.resource.data.schema == 2 && request.resource.data.featureVersion == 6));
+  }
+  match /classPages/{documentId} {
+   allow read: if true;
+   allow create, update: if isTeacher()
+    && request.resource.data.keys().hasOnly(['classId','semester','schoolYear','defaultSemester','announcements','assignments','tests','learningPlans','vocabulary','scheduledRefs','updatedAt'])
+    && request.resource.data.classId is string
+    && request.resource.data.semester in [1,2]
+    && request.resource.data.defaultSemester in [1,2]
+    && request.resource.data.announcements is list
+    && request.resource.data.assignments is list
+    && request.resource.data.tests is list
+    && request.resource.data.learningPlans is list
+    && request.resource.data.vocabulary is list
+    && request.resource.data.scheduledRefs is list
+    && request.resource.data.updatedAt is timestamp;
+   allow delete: if isTeacher();
+  }
+  match /scheduledContent/{documentId} {
+   // A direct document read is allowed only after release and for the current public year.
+   allow get: if isTeacher() || (resource.data.publishAt is timestamp
+    && request.time >= resource.data.publishAt
+    && resource.data.yearId == get(/databases/$(database)/documents/teacherData/meta).data.activeYear);
+   allow list: if isTeacher();
+   allow create, update: if isTeacher()
+    && request.resource.data.keys().hasOnly(['yearId','classId','semester','kind','publishAt','item'])
+    && request.resource.data.yearId is string
+    && request.resource.data.classId is string
+    && request.resource.data.semester in [1,2]
+    && request.resource.data.kind in ['announcements','assignments','tests','learningPlans','vocabulary']
+    && request.resource.data.publishAt is timestamp
+    && request.resource.data.item is map;
+   allow delete: if isTeacher();
+  }
+  match /{document=**} {allow read, write: if false;}
+ }
 }

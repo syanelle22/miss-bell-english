@@ -1,94 +1,50 @@
-# Miss Bell’s English Journal — School years update
+# Miss Bell’s English Club — Final v6
 
-English tracker untuk 13 kelas, kelas 1–6. Tema vintage dan motion scroll tetap dipertahankan.
+Desain kucing putih, cream, baby blue, dan merah. Home hanya berisi menu; kelas dan semester dipilih lewat dropdown. Versi ini memakai proyek Firebase lama Miss Bell. Tidak ada data contoh atau database baru yang diisikan otomatis.
 
-## Pasang pembaruan pada website yang sudah berjalan
+## Pasang satu kali di website GitHub yang sama
 
-1. Di website lama, pastikan **Saved to Firebase** muncul, lalu klik **Backup**. Simpan backup privat di komputer. Jangan unggah backup atau ekspor nilai ke repository publik.
-2. Tutup semua tab website lama pada perangkat yang digunakan mengedit.
-3. Ekstrak ZIP pembaruan.
-4. Buka `firestore.rules` dengan Notepad. Salin seluruh isinya.
-5. Di Firebase Console, pilih **Firestore Database → Rules**, ganti aturan dengan isi file tadi, kemudian klik **Publish**. Ini tetap membatasi data guru hanya ke akun Google Miss Bell. Perubahan menambahkan tahun ajaran pada halaman publik dan mencegah aplikasi versi lama menimpa metadata tahun ajaran.
-6. Buka repository `syanelle22/miss-bell-english` → **Add file → Upload files**. Unggah SEMUA file hasil ekstrak langsung ke halaman utama repository, lalu **Commit changes**. File dengan nama sama diperbarui. Jangan unggah folder pembungkus atau ZIP-nya. File baru juga diperlukan: bukan hanya app.js.
-7. Tunggu deployment GitHub Pages selesai. Buka website lalu tekan **Ctrl + Shift + R**.
-8. Login sebagai Miss Bell. Periksa data siswa dan nilai lama sebelum mulai bekerja.
+1. Sebelum update, buka website lama, login, lalu unduh **Backup** untuk setiap tahun ajaran yang berisi data. Simpan file JSON di komputer; jangan unggah backup ke repository publik. Tutup tab website lama setelah backup selesai.
+2. Extract ZIP ini. Di repository `syanelle22/miss-bell-english`, pilih **Add file → Upload files**. Unggah seluruh isi hasil extract ke tingkat utama repository, lalu **Commit changes**. File dengan nama sama menggantikan versi lama; jangan membuat folder pembungkus baru. Tidak perlu menghapus data Firebase atau repository. File tema lama yang tidak dipakai boleh dibiarkan.
+3. Buka proyek Firebase `miss-bell-s-english-classes` → **Cloud Firestore → Rules**. Ganti seluruh teks editor dengan isi **firestore.rules** dari paket ini, lalu **Publish**. Mengganti Rules tidak menghapus dokumen database. Rules v6 diperlukan untuk jadwal tayang dan materi belajar.
+4. Setelah GitHub Pages selesai deploy, buka website, lakukan hard refresh (Ctrl+Shift+R di PC), lalu **Teacher login** memakai `syawos0@gmail.com`. Pilih tahun ajaran aktif, periksa daftar siswa serta nilai, kemudian klik **Sync noticeboard** di Teacher’s Desk dan tunggu **Saved to Firebase**. Jika ada beberapa tahun, sinkronkan masing-masing tahun bila ingin semua datanya tersimpan dalam format terbaru; hanya tahun publik yang menerbitkan noticeboard.
+5. Uji halaman publik melalui Incognito: Home → pilih kelas → buka menu. Nilai, nama siswa, catatan guru, dan status pengumpulan individu tidak ditampilkan kepada publik. Coba satu pengumuman biasa dan satu pengumuman terjadwal sebelum membagikan website ke keluarga.
 
-Mengunggah firestore.rules ke GitHub tidak menerapkannya ke Firebase. Langkah Publish di Firebase tetap diperlukan. Aturan baru bisa membuat aplikasi lama gagal menyimpan sampai file website diperbarui. Tutup tab lama dan gunakan versi baru.
+Jika Google login menampilkan `auth/unauthorized-domain`: Firebase → Authentication → Settings → Authorized domains → tambahkan `syanelle22.github.io` (tanpa https atau path). Pastikan provider Google sudah diaktifkan.
 
-## Tahun ajaran dan data lama
+## Data lama
 
-Saat pertama digunakan, data dari versi lama dibaca sebagai tahun ajaran 2026/2027 berdasarkan tahun sekolah saat pembaruan dibuat. Aplikasi tidak menghapus dokumen data lama.
+Struktur data siswa, nilai asli, LM, KKM, remedial, arsip tahun, dan ekspor Excel tetap dipertahankan. Migrasi membaca format legacy maupun schema 2; dokumen legacy tidak dihapus. Tidak perlu melakukan Restore hanya untuk memperbarui desain. Restore mengganti data satu tahun, sehingga hanya dipakai bila memang memulihkan backup yang benar. Backup versi 4, 5, dan 6 didukung. Gunakan v6 untuk mengedit setelah Rules v6 terpasang; tab lama akan ditolak saat menyimpan agar tidak membuang fitur baru.
 
-- Gunakan **Manage archives → Update year label** bila label tahun sebelumnya perlu disesuaikan.
-- Perubahan pertama yang tersimpan memindahkan salinan data ke penyimpanan per tahun. Dokumen sumber lama tetap dipertahankan.
-- Pilih tahun melalui **School year**. Aplikasi menyelesaikan penyimpanan sebelum berpindah tahun.
-- **+ School year** membuat tahun baru dengan nilai, target, tugas, pengumuman, dan jadwal kosong. Pilihan menyalin nama siswa bersifat opsional dan memakai kelas yang sama. Ini tidak menaikkan kelas secara otomatis.
-- Tahun baru tidak langsung menjadi tahun publik. Pilih **Manage archives → Make this year public** saat sudah siap.
-- Orang tua hanya melihat tahun publik yang aktif, bukan arsip tahun sebelumnya.
-- Tahun publik aktif tidak dapat diarsipkan sebelum tahun lain dijadikan publik.
+## Materi mingguan dan kosakata
 
-## Arsip kelas dan tahun
+Teacher’s Desk → **Weekly plans** atau **Vocabulary sets**. Pilih Senin sebagai awal minggu, isi materi, dan pilih kelas tujuan. Weekly plan tampil di Calendar untuk minggu berjalan. Vocabulary Corner menampilkan set terakhir yang sudah dipublikasikan dengan minggu mulai yang tidak melewati minggu berjalan.
 
-- Pilih tahun dan kelas dahulu, lalu **Manage archives**.
-- **Archive class** atau **Archive this year** menyimpan data dan menonaktifkan pengeditan. Data masih bisa dibaca, dicetak, dan diekspor.
-- **Restore class** atau **Restore this year** mengaktifkan pengeditan kembali.
-- Mengarsipkan kelas pada tahun aktif mengosongkan tugas, pengumuman, dan jadwal kelas tersebut di halaman publik setelah tersimpan. Data guru tetap ada.
-- Backup sekarang berisi data tahun yang sedang dipilih, seluruh kelas dan kedua semester. Untuk menyimpan backup beberapa tahun, unduh masing-masing tahun. Belum ada tombol impor backup.
+Kosakata ditulis satu baris per kata, dengan bentuk:
 
-## Target nilai
+    book | A set of pages to read. | This is my book.
+    pencil | Something to write with. | I have a pencil.
 
-Isi **Target nilai** di toolbar. Target berlaku untuk kelas, semester, dan tahun yang sedang dipilih.
+Maksimal 20 kata per set, masing-masing kolom maksimal 200 karakter. Makna boleh ditulis dalam bahasa yang sesuai kebutuhan kelas. Tombol Listen memakai suara English dari perangkat/browser; jika suara tidak tersedia, ada pemberitahuan. Tidak memerlukan akun AI atau layanan audio berbayar.
 
-- Tidak ada target bawaan. Kosongkan kolom untuk mematikan penanda.
-- Nilai harian, rata-rata LM, dan nilai tes utama yang lebih rendah dari target ditandai merah muda dengan teks merah.
-- Nilai yang sama dengan target tidak ditandai. Nilai kosong tidak ditandai. Nilai 0 tetap dihitung.
-- Target tidak mengubah nilai atau hasil rata-rata. Ini penanda bagi guru, dan tidak dipublikasikan ke orang tua.
+**Draft** hanya terlihat guru. **Publish now** menampilkan setelah penyimpanan berhasil. **Schedule for later** menggunakan waktu WIB (UTC+7). **Preview for families** memperlihatkan isi sebelum disimpan. **Unpublish** pada materi belajar mengembalikan ke draft; isinya tetap tersedia untuk diterbitkan ulang.
 
-## Ekspor Excel dengan grafik
+## Jadwal tayang
 
-Klik **Export Excel**, pilih **Excel workbook (.xlsx) with chart**, kemudian **Save** untuk mengunduh.
+Pengumuman, tugas, tes, weekly plan, dan vocabulary dapat dijadwalkan. Kontennya dipisahkan dari halaman publik dan Firestore menolak akses sebelum waktu rilis. Guru boleh offline saat waktu rilis tiba. Website keluarga memeriksa materi yang sudah waktunya setiap 15 detik ketika halaman terbuka. Perangkat keluarga perlu tanggal dan waktu otomatis yang benar.
 
-Workbook berisi:
+Untuk menerbitkan segera, edit → Publish now → Save. Untuk membatalkan, edit → Draft → Save. Maksimal 200 item berstatus Scheduled per tahun (termasuk jadwal yang sudah lewat); ubah jadwal lama ke Publish now atau Draft bila mendekati batas. Tidak perlu Cloud Functions, cron, indeks tambahan, atau upload dokumen ke Firebase Storage untuk fitur ini. Pemakaian Firestore tetap mengikuti kuota proyek.
 
-1. **Summary:** rata-rata kelas untuk LM 1–4, Midterm dan Semester test, target, jumlah nilai yang sudah tercatat, jumlah siswa di bawah target, dan grafik batang yang dapat diedit dengan skala 0–100.
-2. **Recap:** rekap masing-masing siswa, penanda nilai rendah, filter, judul, serta header yang tetap terlihat saat menggulir. Di sebelah kanan terdapat perhitungan penanda 1/0 yang menjadi sumber jumlah siswa di bawah target.
-3. **Daily scores:** semua tes harian, termasuk tes tambahan, dengan label LM dan kompetensi.
+## Nilai dan ekspor
 
-Rata-rata dan ringkasan dalam Excel memakai rumus yang terhubung. Nilai mentah bisa diedit di Daily scores dan nilai tes utama di Recap. Target utama ada di Summary C4. Grafik terhubung ke sel ringkasan. Nilai kosong dikecualikan dan nol dihitung. Setiap tes harian di dalam LM memiliki bobot sama. Rata-rata LM kelas dihitung dari rata-rata LM masing-masing siswa. Tidak ada nilai akhir gabungan yang dihitung otomatis.
+13 kelas: 1A/1B, 2A/2B/2C, 3A/3B, 4A/4B, 5A/5B, 6A/6B. Setiap semester memiliki 4 LM × 2 kompetensi, Midterm dan End-of-semester. Semua rata-rata mengabaikan kosong dan memasukkan angka nol. Nilai asli tetap disimpan. Bila nilai awal di bawah KKM dan percobaan remedial terakhir mencapai KKM, nilai akhir menjadi tepat KKM; percobaan yang gagal tidak mengganti nilai asli.
 
-CSV lama tetap tersedia pada pilihan format ekspor.
+Export Excel mempertahankan rekap, grafik, nilai asli/akhir, dan riwayat remedial. Needs attention dapat difilter menjadi nilai kosong, nilai di bawah target/remedial, atau tugas lewat tenggat.
 
-## Tugas dan jadwal ke beberapa kelas
+## Dokumen dan login
 
-Saat membuat tugas atau jadwal, centang kelas-kelas yang diinginkan. Kelas yang diarsipkan tidak dapat dipilih.
+Lampiran tetap berupa tautan HTTPS Google Drive atau dokumen web. Atur izin dokumen di Drive untuk penerima yang benar. Website ini tidak mengunggah dokumen ke Storage. Siswa/orang tua tidak perlu akun. Login guru dibatasi ke akun Google Miss Bell yang terverifikasi, dan Rules menolak akses privat dari akun lain.
 
-Untuk item yang sudah dibuat, gunakan **Copy to classes**, pilih kelas tujuan, dan sesuaikan tanggal bila diperlukan. Setiap kelas mendapat salinan independen dengan ID baru. Mengedit satu salinan tidak mengubah kelas lain. Nilai dan status pengumpulan tidak ikut disalin. Menyalin lagi akan membuat item baru, bukan memperbarui salinan sebelumnya.
+## Status pengujian
 
-## Lampiran pengumuman dan tugas
-
-Lampiran memakai tautan dokumen HTTPS, sesuai pilihan Google Drive. Tidak ada unggah file langsung ke Firebase Storage dan tidak perlu mengaktifkan Blaze untuk fitur tautan ini.
-
-1. Unggah dokumen PDF/Word ke Google Drive milikmu.
-2. Atur hak lihat dokumen bagi siswa/orang tua yang dituju. Misalnya, tautan dapat dilihat oleh penerimanya jika itu memang diinginkan.
-3. Salin sharing link.
-4. Pada pengumuman atau tugas, isi **Document name** dan **Google Drive document link**.
-5. Tunggu **Saved to Firebase**. Tautan dokumen muncul pada halaman publik.
-
-Gunakan Edit untuk mengganti lampiran. Kosongkan link untuk menghapus tautan dari item, tanpa menghapus file di Drive. Aplikasi tidak mengubah izin berbagi di Google Drive secara otomatis. Jangan lampirkan dokumen nilai atau catatan privat pada item publik.
-
-## Firebase dan akses
-
-- Google sign-in dan authorized domain `syanelle22.github.io` tetap harus aktif.
-- Data privat berada dalam teacherData dan hanya akun `syawos0@gmail.com` yang boleh mengaksesnya.
-- Halaman orang tua hanya membaca classPages: pengumuman, instruksi tugas, dokumen publik yang ditautkan, serta jadwal tes. Tidak ada nama siswa, nilai, target, atau status individu yang dipublikasikan otomatis.
-- Aplikasi menolak menimpa data jika perangkat/tab lain telah mengubah revisi database. Unduh Backup sebelum memuat ulang untuk menjaga draft.
-- Gunakan satu tab/perangkat untuk mengedit dalam satu waktu, dan tunggu Saved to Firebase sebelum menutup.
-- Ukuran data privat dibatasi 800 KB per kelas per tahun. Bila batas tercapai, ekspor atau backup sebelum melanjutkan.
-
-## Pemeriksaan paket
-
-Pemeriksaan sintaks dan pengujian model/transaksi simulasi meliputi migrasi data lama, pemisahan tahun, pembuatan semua kelas, aktivasi tahun publik, penyimpanan target, arsip kelas, konflik revisi, whitelist publik, URL aman, serta salinan antar kelas.
-
-Di browser dengan Firebase simulasi lokal: tugas beserta lampiran muncul di dua kelas, tahun baru dimulai kosong, dan pengarsipan menonaktifkan editing. Tidak ada data percobaan yang ditulis ke Firebase pengguna.
-
-Hasil XLSX diuji dengan import ulang dan kalkulasi rumus: nilai nol/kosong, tes tambahan, perluasan rentang 50 siswa, kelas kosong, target kosong, perubahan input, serta grafik native. Ketiga lembar dirender dan diperiksa. Pemeriksaan akhir pada Microsoft Excel desktop dan sinkronisasi Firebase dengan akun pengguna perlu dilakukan setelah pembaruan dipasang.
+Logika nilai, migrasi legacy, pemisahan tahun/kelas, backup versi lama/baru, materi belajar, publikasi, dan pembatasan akses diuji secara lokal. Antarmuka editor diuji dengan data terpisah. Login Google dan data asli proyek perlu diperiksa setelah upload dan Rules dipasang; paket ini tidak mengubah database produksi saat dibuat.
